@@ -26,10 +26,15 @@ class HomeVM: ObservableObject {
     private let onAppearSubject = PassthroughSubject<Void, Error>()
     private var cancellables: [AnyCancellable] = []
     private var networkMonitor = NetworkManager()
-
+    
     init() {
         networkMonitor.$isConnected
             .assign(to: &$isConnected)
+        NotificationCenter.default.addObserver(self, selector: #selector(handleFavoriteUpdate), name: .favoritesUpdated, object: nil)
+    }
+    
+    @objc private func handleFavoriteUpdate() {
+        updateNewsListFavoriteStatus()
     }
     
     func fetchNews() {
@@ -114,14 +119,15 @@ class HomeVM: ObservableObject {
             )
         }
     }
-    
     func updateNewsListFavoriteStatus() {
         let arrayOfFavIds = CoreDataManager.shared.fetchFavoriteNewsIDs()
+        
         newsList = newsList.map { newsItem in
             var updatedNewsItem = newsItem
             updatedNewsItem.isFavorite = arrayOfFavIds.contains(newsItem.id ?? "")
             return updatedNewsItem
         }
+
         allCategoryData = allCategoryData.mapValues { newsResponses in
             newsResponses.map { newsResponse in
                 var updatedNewsResponse = newsResponse
@@ -131,4 +137,3 @@ class HomeVM: ObservableObject {
         }
     }
 }
-

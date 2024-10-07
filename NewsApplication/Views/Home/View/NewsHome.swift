@@ -85,8 +85,10 @@ struct NewsHome: View {
                 }
             }
             .onAppear {
+                viewModel.updateNewsListFavoriteStatus()
                 viewModel.fetchNews()
-            }
+           
+        }
             .onChange(of: viewModel.isConnected) {
                 if viewModel.isConnected {
                     navigateToFavorites = false

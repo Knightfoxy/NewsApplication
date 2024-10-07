@@ -36,7 +36,7 @@ struct FavoriteView: View {
                 .shadow(radius: 2)
                 if viewModel.favoriteNewsList.isEmpty {
                     NoDataView(image: "star", message: "No favorites present!")
-                        .padding()
+                        .frame(maxHeight: .infinity)
                 } else {
                     ScrollView {
                         
@@ -44,8 +44,12 @@ struct FavoriteView: View {
                             LazyVGrid(columns: [GridItem(), GridItem()]) {
                                 ForEach(viewModel.favoriteNewsList, id: \.self) { value in
                                     NavigationLink(destination: DetailWebView(url: URL(string: value.url ?? "")!)) {
-                                        NewsGridView(heading: value.title ?? "", description: value.desc ?? "", isFavorite: true,   toggleFavorite: {
-                                            viewModel.deleteFavoriteNews(at: value.id ?? "")
+                                        NewsGridView(heading: value.name ?? "", description: value.description ?? "", isFavorite: true,   toggleFavorite: {
+                                            viewModel.deleteFavoriteNews(at: value.id!)
+                                            if let check = value.id {
+                                                WishlistManager.shared.updateWishlist(check)
+                                                print(WishlistManager.shared.wishlistId)
+                                            }
                                         })
                                         .padding(.bottom, 10)
                                     }
@@ -59,11 +63,15 @@ struct FavoriteView: View {
                                 ForEach(viewModel.favoriteNewsList, id: \.self) { news in
                                     NavigationLink(destination: DetailWebView(url: URL(string: news.url ?? "")!)) {
                                         NewsItem(
-                                            heading: news.title ?? "title",
-                                            description: news.desc ?? "",
+                                            heading: news.name ?? "title",
+                                            description: news.description ?? "",
                                             isFavorite: true,
                                             toggleFavorite: {
-                                                viewModel.deleteFavoriteNews(at: news.id ?? "")
+                                                viewModel.deleteFavoriteNews(at: news.id!)
+                                                if let check = news.id {
+                                                    WishlistManager.shared.updateWishlist(check)
+                                                    print(WishlistManager.shared.wishlistId)
+                                                }
                                             }
                                         )
                                         .padding(.horizontal)
@@ -78,8 +86,8 @@ struct FavoriteView: View {
             .onAppear {
                 viewModel.fetchFavoriteNews()
             }
-            .onChange(of: viewModel.isConnected) { isConnected in
-                print("Network status changed: \(isConnected)")
+            .onChange(of: viewModel.isConnected) {
+                print("Network status changed: \(viewModel.isConnected)")
                 viewModel.fetchFavoriteNews()
             }
         }

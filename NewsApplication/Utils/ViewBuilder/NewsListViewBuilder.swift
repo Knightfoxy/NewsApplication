@@ -47,15 +47,27 @@ struct NewsListViewBuilder: View {
                     NewsGridView(
                         heading: value.name ?? "",
                         description: value.description ?? "",
-                        isFavorite: value.isFavorite,
-                        toggleFavorite: { viewModel.toggleFavorite(news: value) }
+                        isFavorite: WishlistManager.shared.isWishlisted(value.id ?? ""),
+                        toggleFavorite: {
+                            viewModel.toggleFavorite(news: value)
+                            if let check = value.id {
+                                WishlistManager.shared.updateWishlist(check)
+                                print(WishlistManager.shared.wishlistId)
+                            }
+                        }
                     )
                 } else {
                     NewsItem(
                         heading: value.name ?? "",
                         description: value.description ?? "",
-                        isFavorite: value.isFavorite,
-                        toggleFavorite: { viewModel.toggleFavorite(news: value) }
+                        isFavorite: WishlistManager.shared.isWishlisted(value.id ?? ""),
+                        toggleFavorite: {
+                            viewModel.toggleFavorite(news: value)
+                            if let check = value.id {
+                                WishlistManager.shared.updateWishlist(check)
+                                print(WishlistManager.shared.wishlistId)
+                            }
+                        }
                     )
                 }
             }

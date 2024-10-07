@@ -21,7 +21,7 @@ struct FullListView: View {
                     LazyVGrid(columns: [GridItem(), GridItem()]) {
                         ForEach(newsList.values.flatMap { $0 }, id: \.self) { value in
                             NavigationLink(destination: DetailWebView(url: URL(string: value.url ?? "")!)) {
-                                NewsGridView(heading: value.name ?? "", description: value.description ?? "", isFavorite: value.isFavorite ?? false, toggleFavorite: {
+                                NewsGridView(heading: value.name ?? "", description: value.description ?? "", isFavorite: value.isFavorite, toggleFavorite: {
                                     viewModel.toggleFavorite(for: value)
                                     updateNewsListFavoriteStatus()
                                 })

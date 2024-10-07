@@ -12,7 +12,6 @@ struct NewsApplicationApp: App {
     @StateObject private var layoutHandler = LayoutHandler(layoutManager: UserDefaultsManager())
     @Environment(\.scenePhase) var scenePhase
     
-    
     var body: some Scene {
         WindowGroup {
             NewsHome()

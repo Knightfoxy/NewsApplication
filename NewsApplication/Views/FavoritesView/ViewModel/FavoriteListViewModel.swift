@@ -10,7 +10,7 @@ import CoreData
 
 class FavoriteViewModel: ObservableObject {
     
-    @Published var favoriteNewsList: [FavoriteNews] = []
+    @Published var favoriteNewsList: [NewsResponse] = []
     @Published var isConnected: Bool = true
     private let coreDataManager = CoreDataManager.shared
 
@@ -21,10 +21,16 @@ class FavoriteViewModel: ObservableObject {
 
     func fetchFavoriteNews() {
         favoriteNewsList = coreDataManager.fetchFavoriteNews()
+        print(favoriteNewsList)
     }
 
     func deleteFavoriteNews(at id: String) {
         coreDataManager.deleteNewsById(id: id)
         fetchFavoriteNews()
+        NotificationCenter.default.post(name: .favoritesUpdated, object: nil)
     }
+}
+
+extension Notification.Name {
+    static let favoritesUpdated = Notification.Name("favoritesUpdated")
 }

@@ -64,18 +64,40 @@ class CoreDataManager {
     }
     
     // MARK: - Fetch Data
-    func fetchFavoriteNews() -> [FavoriteNews] {
+    func fetchFavoriteNews() -> [NewsResponse] {
         let context = persistentContainer.viewContext
         let fetchRequest: NSFetchRequest<FavoriteNews> = FavoriteNews.fetchRequest()
-        
+
         do {
-            return try context.fetch(fetchRequest)
+            let favoriteNewsList = try context.fetch(fetchRequest)
+            
+            let mappedNews: [NewsResponse] = favoriteNewsList.compactMap { (favoriteNews: FavoriteNews) -> NewsResponse? in
+                guard let id = favoriteNews.id,
+                      let title = favoriteNews.title,
+                      let desc = favoriteNews.desc,
+                      let url = favoriteNews.url else {
+                    return nil
+                }
+
+                return NewsResponse(
+                    id: id,
+                    name: title,
+                    description: desc,
+                    url: url,
+                    category: nil,
+                    language: nil,
+                    country: nil
+                )
+            }
+
+            return mappedNews
         } catch {
             print("Failed to fetch favorite news: \(error)")
             return []
         }
     }
-    
+
+ 
     // MARK: - Delete Data
     func deleteNewsById(id: String) {
         let context = persistentContainer.viewContext

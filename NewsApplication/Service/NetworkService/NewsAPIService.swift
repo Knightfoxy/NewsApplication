@@ -28,14 +28,11 @@ class NewsAPIService: APIServiceType {
                 .retry(1)
                 .tryMap {
                     guard let code = ($0.response as? HTTPURLResponse)?.statusCode else {
-                        print( "Data not pared111122222 --->>>")
                         throw APIServiceError.unexpectedResponse
                     }
                     guard HTTPCodes.success.contains(code) else {
-                        print( "Data not pared1111 --->>>", code)
                         throw APIServiceError.httpError(code)
                     }
-                    print( "Data not pared --->>>", $0.data)
                     return $0.data
                 }
                 .decode(type: Request.ModelType.self, decoder: JSONDecoder())
